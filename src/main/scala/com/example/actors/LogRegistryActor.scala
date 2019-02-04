@@ -1,10 +1,7 @@
-package com.example
+package com.example.actors
 
-import akka.actor.{Actor, ActorLogging, Props}
-import java.time.LocalDateTime
-
-final case class Log(id: String, date: LocalDateTime, level: String, name: String, message: String)
-final case class Logs(logs: Seq[Log])
+import akka.actor.{Actor, Props}
+import com.example.models.{Log, Logs}
 
 object LogRegistryActor {
   final case object GetLogs

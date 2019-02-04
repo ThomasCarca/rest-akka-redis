@@ -1,11 +1,11 @@
-package com.example
+package com.example.utils
 
-import akka.http.scaladsl.marshallers.sprayjson.SprayJsonSupport
-import spray.json.DefaultJsonProtocol
 import java.time.LocalDateTime
 import java.time.format.DateTimeFormatter
-import spray.json.{JsValue, JsonFormat, _}
 
+import akka.http.scaladsl.marshallers.sprayjson.SprayJsonSupport
+import com.example.models.{Log, Logs}
+import spray.json.{DefaultJsonProtocol, JsString, JsValue, JsonFormat, RootJsonFormat, deserializationError}
 
 trait JsonSupport extends SprayJsonSupport {
   import DefaultJsonProtocol._
@@ -14,15 +14,15 @@ trait JsonSupport extends SprayJsonSupport {
 
     def write(dateTime: LocalDateTime) = JsString(dateTime.format(DateTimeFormatter.ISO_LOCAL_DATE_TIME))
 
-    def read(value: JsValue) = value match {
+    def read(value: JsValue): LocalDateTime = value match {
       case JsString(dateTime) => LocalDateTime.parse(dateTime, DateTimeFormatter.ISO_LOCAL_DATE_TIME)
       case _ => deserializationError("LocalDateTime expected.")
     }
 
   }
 
-  implicit val logJsonFormat = jsonFormat5(Log)
-  implicit val logsJsonFormat = jsonFormat1(Logs)
+  implicit val logJsonFormat: RootJsonFormat[Log] = jsonFormat5(Log)
+  implicit val logsJsonFormat: RootJsonFormat[Logs] = jsonFormat1(Logs)
 
 
 }
