@@ -29,7 +29,7 @@ object QuickstartServer extends App with LogRoutes {
 
   println(s"Server online at http://localhost:8080/")
 
-  system.scheduler.schedule(0.second, 2.seconds) {
+  system.scheduler.schedule(2.second, 2.seconds) {
     logGeneratorActor ! GenerateLog
     println(s"[${LocalDateTime.now()}] A new log has been generated...")
   }
