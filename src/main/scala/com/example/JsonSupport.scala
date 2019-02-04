@@ -1,18 +1,28 @@
 package com.example
 
-import com.example.UserRegistryActor.ActionPerformed
-
-//#json-support
 import akka.http.scaladsl.marshallers.sprayjson.SprayJsonSupport
 import spray.json.DefaultJsonProtocol
+import java.time.LocalDateTime
+import java.time.format.DateTimeFormatter
+import spray.json.{JsValue, JsonFormat, _}
+
 
 trait JsonSupport extends SprayJsonSupport {
-  // import the default encoders for primitive types (Int, String, Lists etc)
   import DefaultJsonProtocol._
 
-  implicit val userJsonFormat = jsonFormat3(User)
-  implicit val usersJsonFormat = jsonFormat1(Users)
+  implicit object LocalDateTimeFormat extends JsonFormat[LocalDateTime] {
 
-  implicit val actionPerformedJsonFormat = jsonFormat1(ActionPerformed)
+    def write(dateTime: LocalDateTime) = JsString(dateTime.format(DateTimeFormatter.ISO_LOCAL_DATE_TIME))
+
+    def read(value: JsValue) = value match {
+      case JsString(dateTime) => LocalDateTime.parse(dateTime, DateTimeFormatter.ISO_LOCAL_DATE_TIME)
+      case _ => deserializationError("LocalDateTime expected.")
+    }
+
+  }
+
+  implicit val logJsonFormat = jsonFormat5(Log)
+  implicit val logsJsonFormat = jsonFormat1(Logs)
+
+
 }
-//#json-support
