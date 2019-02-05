@@ -2,7 +2,7 @@ package com.example
 
 import java.time.LocalDateTime
 
-import scala.concurrent.{Await, ExecutionContext}
+import scala.concurrent.Await
 import scala.concurrent.duration.Duration
 import akka.actor.{ActorRef, ActorSystem}
 import akka.http.scaladsl.Http
