@@ -3,7 +3,7 @@ package com.example.routes
 import akka.actor.{ActorRef, ActorSystem}
 import akka.pattern.ask
 import akka.event.Logging
-import akka.http.scaladsl.marshalling.ToResponseMarshallable
+import akka.http.scaladsl.model._
 import akka.http.scaladsl.server.Directives._
 import akka.http.scaladsl.server.Route
 import akka.http.scaladsl.server.directives.MethodDirectives.get
