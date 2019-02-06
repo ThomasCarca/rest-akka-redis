@@ -20,7 +20,7 @@ class LogRoutesSpecs extends WordSpec with Matchers with ScalaFutures with Scala
 
   "GET /logs" should {
 
-    "should return a Logs type as json when no parameter passed" in {
+    "should return a Logs type as json when no parameter given" in {
       val request = HttpRequest(uri = "/logs")
 
       request ~> routes ~> check {
@@ -30,7 +30,7 @@ class LogRoutesSpecs extends WordSpec with Matchers with ScalaFutures with Scala
       }
     }
 
-    "should return a Logs type as json when limit parameter passed" in {
+    "should return a Logs type as json when limit parameter given" in {
       val request = HttpRequest(uri = "/logs?limit=10")
 
       request ~> routes ~> check {
@@ -40,7 +40,7 @@ class LogRoutesSpecs extends WordSpec with Matchers with ScalaFutures with Scala
       }
     }
 
-    "should return a Logs type as json when level parameter passed" in {
+    "should return a Logs type as json when level parameter given" in {
       val request = HttpRequest(uri = "/logs?level=WARNING")
 
       request ~> routes ~> check {
@@ -50,7 +50,7 @@ class LogRoutesSpecs extends WordSpec with Matchers with ScalaFutures with Scala
       }
     }
 
-    "should return a Logs type as json when limit and level parameters passed" in {
+    "should return a Logs type as json when limit and level parameters given" in {
       val request = HttpRequest(uri = "/logs?limit=5&level=WARNING")
 
       request ~> routes ~> check {
@@ -60,7 +60,7 @@ class LogRoutesSpecs extends WordSpec with Matchers with ScalaFutures with Scala
       }
     }
 
-    "should return a Logs type as json when incorrect limit or level parameters" in {
+    "should return a Logs type as json when incorrect limit or level parameters given" in {
       val request = HttpRequest(uri = "/logs?limit=incorrect&level=999")
 
       request ~> Route.seal(routes) ~> check {
