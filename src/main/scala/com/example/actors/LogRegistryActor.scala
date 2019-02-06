@@ -8,6 +8,7 @@ import com.example.utils.JsonSupport
 import com.example.utils.LogLevelFormatter._
 
 object LogRegistryActor {
+  final case object GetLogNumber
   final case class GetLogs(limit: Option[Int], level: Option[String])
   final case class Add(log: Log)
 
@@ -19,7 +20,7 @@ class LogRegistryActor extends Actor with JsonSupport {
 
   var redis = new RedisClient("localhost", 6379)
 
-  def sendBackLogs(maybeLogs: Option[List[String]]) = {
+  def sendBackLogs(maybeLogs: Option[List[String]]): Unit = {
     maybeLogs match {
       case Some(logList) =>
         val parsedLogList = logList.map(_.parseJson.convertTo[Log])
@@ -30,8 +31,14 @@ class LogRegistryActor extends Actor with JsonSupport {
 
   def receive: Receive = {
 
+    case GetLogNumber =>
+      redis.zcard("logs_by_date") match  {
+        case Some(number) => sender() ! number.toString
+        case None => sender() ! "0"
+      }
+
     case GetLogs(Some(limit), Some(level)) =>
-      val logs = redis.zrangebyscore("logs_by_level", stringLevelToInt(level), true, 50, true, Some(0, limit))
+      val logs = redis.zrangebyscore("logs_by_level", stringLevelToInt(level), minInclusive = true, 50, maxInclusive = true, Some(0, limit))
       sendBackLogs(logs)
 
     case GetLogs(Some(limit), None) =>
@@ -39,7 +46,7 @@ class LogRegistryActor extends Actor with JsonSupport {
       sendBackLogs(logs)
 
     case GetLogs(None, Some(level)) =>
-      val logs = redis.zrangebyscore("logs_by_level", stringLevelToInt(level), true, 50, true, None)
+      val logs = redis.zrangebyscore("logs_by_level", stringLevelToInt(level), minInclusive = true, 50, maxInclusive = true, None)
       sendBackLogs(logs)
 
     case GetLogs(None, None) =>
