@@ -22,8 +22,9 @@ object LogGeneratorActor {
 
 class LogGeneratorActor(logRegistryActor: ActorRef) extends Actor {
   import LogGeneratorActor.GenerateLog
+  import com.example.utils.LogLevelFormatter._
 
-  private val LEVELS = Set("DEBUG", "INFO", "WARNING", "ERROR", "CRITICAL")
+  private val LEVELS = Set(DEBUG, INFO, WARNING, ERROR, CRITICAL)
   private val NAMES = Set("store_app", "inventory_app", "transaction_app")
 
   private def generateLog: Log = {

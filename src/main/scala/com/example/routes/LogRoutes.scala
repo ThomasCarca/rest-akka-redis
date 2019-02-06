@@ -3,7 +3,7 @@ package com.example.routes
 import akka.actor.{ActorRef, ActorSystem}
 import akka.pattern.ask
 import akka.event.Logging
-import akka.http.scaladsl.server.Directives.{pathEndOrSingleSlash, pathPrefix}
+import akka.http.scaladsl.server.Directives._
 import akka.http.scaladsl.server.Route
 import akka.http.scaladsl.server.directives.MethodDirectives.get
 import akka.http.scaladsl.server.directives.RouteDirectives.complete
@@ -25,14 +25,18 @@ trait LogRoutes extends JsonSupport {
 
   implicit lazy val timeout: Timeout = Timeout(5.seconds)
 
+  val getLogs =
+    get {
+      parameters('limit.as[Int].? , 'level.as[String].?) { (limit, level) =>
+        val logs: Future[Logs] = (logRegistryActor ? GetLogs(limit, level)).mapTo[Logs]
+        complete(logs)
+      }
+  }
+
   lazy val logRoutes: Route =
     pathPrefix("logs") {
       pathEndOrSingleSlash {
-        get {
-          val logs: Future[Logs] =
-            (logRegistryActor ? GetLogs).mapTo[Logs]
-          complete(logs)
-        }
+        getLogs
       }
     }
 }

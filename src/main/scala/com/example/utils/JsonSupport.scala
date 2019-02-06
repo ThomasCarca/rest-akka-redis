@@ -21,7 +21,7 @@ trait JsonSupport extends SprayJsonSupport {
 
   }
 
-  implicit val logJsonFormat: RootJsonFormat[Log] = jsonFormat5(Log.apply)
+  implicit val logJsonFormat: RootJsonFormat[Log] = jsonFormat5(Log)
   implicit val logsJsonFormat: RootJsonFormat[Logs] = jsonFormat1(Logs)
 
 
