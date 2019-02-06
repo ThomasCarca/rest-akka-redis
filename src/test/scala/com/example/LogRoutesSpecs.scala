@@ -20,7 +20,7 @@ class LogRoutesSpecs extends WordSpec with Matchers with ScalaFutures with Scala
 
   "GET /logs" should {
 
-    "should return a Logs type as json" in {
+    "should return a Logs type as json when no parameter passed" in {
       val request = HttpRequest(uri = "/logs")
 
       request ~> routes ~> check {
@@ -29,6 +29,58 @@ class LogRoutesSpecs extends WordSpec with Matchers with ScalaFutures with Scala
         entityAs[Logs]
       }
     }
+
+    "should return a Logs type as json when limit parameter passed" in {
+      val request = HttpRequest(uri = "/logs?limit=10")
+
+      request ~> routes ~> check {
+        status              should be (StatusCodes.OK)
+        contentType         should be (ContentTypes.`application/json`)
+        entityAs[Logs]
+      }
+    }
+
+    "should return a Logs type as json when level parameter passed" in {
+      val request = HttpRequest(uri = "/logs?level=WARNING")
+
+      request ~> routes ~> check {
+        status              should be (StatusCodes.OK)
+        contentType         should be (ContentTypes.`application/json`)
+        entityAs[Logs]
+      }
+    }
+
+    "should return a Logs type as json when limit and level parameters passed" in {
+      val request = HttpRequest(uri = "/logs?limit=5&level=WARNING")
+
+      request ~> routes ~> check {
+        status              should be (StatusCodes.OK)
+        contentType         should be (ContentTypes.`application/json`)
+        entityAs[Logs]
+      }
+    }
+
+    "should return a Logs type as json when incorrect limit or level parameters" in {
+      val request = HttpRequest(uri = "/logs?limit=incorrect&level=999")
+
+      request ~> Route.seal(routes) ~> check {
+        status              should be (StatusCodes.BadRequest)
+        responseAs[String]  should be ("The query parameter 'limit' was malformed:\n'incorrect' is not a valid 32-bit signed integer value")
+      }
+    }
+  }
+
+  "GET /logs/number" should {
+
+    "should return the number of logs" in {
+      val request = HttpRequest(uri = "/logs/number")
+
+      request ~> routes ~> check {
+        status                                should be (StatusCodes.OK)
+        entityAs[String].toInt                should be >= 0
+      }
+    }
+
   }
 
 }
